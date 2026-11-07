@@ -20,6 +20,10 @@ export function createCryptoRng(bufferWords = 2048) {
   if (!c || typeof c.getRandomValues !== 'function') {
     throw new Error('createCryptoRng: crypto.getRandomValues is not available in this environment');
   }
+  // getRandomValues fills at most 65536 bytes (16384 words) per call; two words make one number.
+  if (!Number.isInteger(bufferWords) || bufferWords < 2 || bufferWords > 16384) {
+    throw new RangeError('createCryptoRng: bufferWords must be an integer from 2 to 16384');
+  }
   const buffer = new Uint32Array(bufferWords - (bufferWords % 2));
   let pos = buffer.length;
   return function cryptoRng() {

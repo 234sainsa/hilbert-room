@@ -11,6 +11,8 @@ const PI_DENOMINATORS = [1, 2, 3, 4, 6, 8, 12, 16, 32, 64];
 export function formatAngle(theta) {
   if (!Number.isFinite(theta)) throw new RangeError('formatAngle: angle must be finite');
   if (theta === 0) return '0';
+  // Only small multiples of pi are written as such; large angles would need integers too big to read back.
+  if (Math.abs(theta) > 64 * Math.PI) return floatLiteral(theta);
   for (const d of PI_DENOMINATORS) {
     const k = Math.round((theta * d) / Math.PI);
     if (k !== 0 && Math.abs(theta - (k * Math.PI) / d) <= 1e-12 * Math.max(1, Math.abs(theta))) {
