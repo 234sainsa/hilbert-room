@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HILBERT ROOM demo</title>
+  <link rel="stylesheet" href="demo/style.css">
+</head>
+<body>
+  <header>
+    <h1>HILBERT ROOM</h1>
+    <p>A small state-vector quantum circuit simulator. Build a circuit, run shots, and look at the counts and the exact state probabilities.</p>
+    <p class="notice" id="notice"><strong>Simulation only.</strong> Every result on this page is computed on a classical computer. Measurement outcomes are drawn from a classical random number generator (the browser's <code>crypto.getRandomValues</code>, or a seeded pseudo-random generator). They are not quantum randomness and do not come from quantum hardware.</p>
+  </header>
+
+  <main>
+    <section aria-labelledby="build-title">
+      <h2 id="build-title">1. Circuit</h2>
+      <div class="row">
+        <label>Qubits
+          <select id="num-qubits"></select>
+        </label>
+        <span class="group" role="group" aria-label="Example circuits">
+          <button type="button" data-preset="bell">Load Bell pair</button>
+          <button type="button" data-preset="ghz">Load GHZ state</button>
+          <button type="button" data-preset="uniform">Load uniform superposition</button>
+          <button type="button" data-preset="ry">Load RY rotation</button>
+        </span>
+      </div>
+
+      <form id="gate-form" class="row" aria-label="Add a gate">
+        <label>Gate
+          <select id="gate-name"></select>
+        </label>
+        <label id="first-label">Qubit
+          <select id="gate-q1"></select>
+        </label>
+        <label id="second-label">Second qubit
+          <select id="gate-q2"></select>
+        </label>
+        <label id="angle-label">Angle (radians, e.g. pi/2 or 0.3)
+          <input id="gate-angle" type="text" value="pi/2" autocomplete="off" spellcheck="false">
+        </label>
+        <button type="submit">Add gate</button>
+      </form>
+      <p id="form-error" class="error" role="alert"></p>
+
+      <div class="row">
+        <button type="button" id="undo">Remove last gate</button>
+        <button type="button" id="clear">Clear circuit</button>
+      </div>
+
+      <h3>Diagram</h3>
+      <pre id="diagram" class="diagram" aria-describedby="ops-title"></pre>
+      <h3 id="ops-title">Operations, in order</h3>
+      <ol id="ops"></ol>
+      <p id="ops-empty">No gates yet.</p>
+    </section>
+
+    <section aria-labelledby="run-title">
+      <h2 id="run-title">2. Run</h2>
+      <div class="row">
+        <label>Shots
+          <input id="shots" type="number" min="1" max="100000" step="1" value="1024">
+        </label>
+        <fieldset>
+          <legend>Random numbers</legend>
+          <label><input type="radio" name="rng" value="crypto" checked> crypto.getRandomValues (not reproducible)</label>
+          <label><input type="radio" name="rng" value="seeded"> Seeded, reproducible</label>
+          <label>Seed <input id="seed" type="text" value="1" size="8"></label>
+        </fieldset>
+        <fieldset>
+          <legend>Noise (optional, for hardware-like dry runs)</legend>
+          <label>Readout flip % <input id="noise-readout" type="number" min="0" max="100" step="0.1" value="0"></label>
+          <label>1-qubit gate depolarizing % <input id="noise-dep1" type="number" min="0" max="100" step="0.1" value="0"></label>
+          <label>2-qubit gate depolarizing % <input id="noise-dep2" type="number" min="0" max="100" step="0.1" value="0"></label>
+        </fieldset>
+      </div>
+      <div class="row">
+        <button type="button" id="run" class="primary">Run shots</button>
+      </div>
+      <p id="run-status" role="status" aria-live="polite"></p>
+    </section>
+
+    <section aria-labelledby="results-title">
+      <h2 id="results-title">3. Results</h2>
+      <p class="hint">Bitstrings put classical bit 0 (and qubit 0) on the right, as Qiskit does.</p>
+      <h3>Counts</h3>
+      <div id="histogram" class="histogram"></div>
+      <h3>Exact state probabilities</h3>
+      <div id="state"></div>
+    </section>
+
+    <section aria-labelledby="qasm-title">
+      <h2 id="qasm-title">4. OpenQASM 3</h2>
+      <pre id="qasm" class="code"></pre>
+      <div class="row">
+        <button type="button" id="copy-qasm">Copy OpenQASM to clipboard</button>
+        <span id="copy-status" role="status" aria-live="polite"></span>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>IBM Quantum and Qiskit are trademarks of International Business Machines Corporation. This project is not affiliated with or endorsed by IBM.</p>
+  </footer>
+
+  <script type="module" src="demo/app.js"></script>
+</body>
+</html>

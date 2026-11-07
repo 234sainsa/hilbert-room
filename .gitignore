@@ -1,0 +1,6 @@
+# Private working notes stay out of the repository.
+notes/
+
+node_modules/
+.DS_Store
+Thumbs.db

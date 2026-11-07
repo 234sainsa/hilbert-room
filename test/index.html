@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HILBERT ROOM tests</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 16px; background: #fff; color: #111; }
+    pre { white-space: pre-wrap; font-family: ui-monospace, Consolas, monospace; font-size: 13px; }
+    pre[data-status="pass"] { border-left: 4px solid #1a7f37; padding-left: 8px; }
+    pre[data-status="fail"] { border-left: 4px solid #cf222e; padding-left: 8px; }
+  </style>
+</head>
+<body>
+  <h1>HILBERT ROOM tests</h1>
+  <pre id="results" role="status" aria-live="polite" data-status="running">Running…</pre>
+  <script>
+    // Registered before the modules load so a syntax or import error is reported too.
+    window.addEventListener('error', (e) => {
+      const output = document.getElementById('results');
+      output.textContent = `FAILED: ${e.message} (${e.filename}:${e.lineno})`;
+      output.dataset.status = 'fail';
+    });
+  </script>
+  <script type="module">
+    import { runAll } from './harness.js';
+    import './gates.test.js';
+    import './circuit.test.js';
+    import './run.test.js';
+    import './export.test.js';
+    import './demo.test.js';
+
+    const output = document.getElementById('results');
+    runAll(output).catch((err) => {
+      output.textContent = `FAILED: test runner crashed — ${err && err.message ? err.message : err}`;
+      output.dataset.status = 'fail';
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+{
+  "name": "hilbert-room",
+  "version": "0.1.0",
+  "description": "Dependency-free state-vector quantum circuit simulator for the browser, with seeded sampling, a simple noise model and OpenQASM 3 export.",
+  "type": "module",
+  "exports": "./src/index.js",
+  "files": [
+    "src/"
+  ],
+  "keywords": [
+    "quantum",
+    "quantum-computing",
+    "simulator",
+    "state-vector",
+    "openqasm"
+  ],
+  "license": "MIT"
+}
