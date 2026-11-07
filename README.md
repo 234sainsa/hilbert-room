@@ -154,6 +154,25 @@ chrome --headless=new --user-data-dir=<temp dir> --virtual-time-budget=60000 \
 
 The suite checks gate matrices (unitarity and known values), the state-vector kernels against full-matrix multiplication, Bell and GHZ statistics, RY(θ) against sin²(θ/2), a CHSH value of about 2√2 (above the classical bound of 2), seeded reproducibility, mid-circuit measurement, both noise channels, OpenQASM output and the demo page.
 
+## Checked against Qiskit and hardware
+
+**Qiskit.** 108 circuits were exported with `toQasm3`, read back by Qiskit 2.6.2 (`qasm3.loads`), and Qiskit's `Statevector` of each was compared with HILBERT ROOM's exact state. The largest difference was about 5e-16. The gate matrices were also compared with Qiskit's `Operator`.
+
+**Hardware (2026-11-07).** Four circuits were built with HILBERT ROOM, exported with `toQasm3`, transpiled with Qiskit and run on an IBM Quantum Heron r2 processor (`ibm_kingston`, 156 qubits) through the open plan. Several copies of each circuit were placed side by side on the chip in one job of 4000 shots.
+
+The pass line was fixed before the job was sent: the total variation distance (TVD) between the hardware counts and the ideal distribution must be at most 2 × the TVD of a noisy HILBERT ROOM simulation + 0.02, and the counts must be closer to the ideal than to its bit-reversed form (a check on bit order). The noisy simulation re-ran every placed copy with depolarizing and readout errors taken from that copy's qubit and gate calibration, with the same number of shots. The factor 2 leaves room for what the noise model does not have (T1/T2, crosstalk).
+
+| Circuit | Qubits × copies | TVD hardware vs ideal | TVD noisy simulation vs ideal | Line | Result |
+| --- | --- | --- | --- | --- | --- |
+| Bell pair | 2 × 12 | 0.041 | 0.028 | 0.075 | pass |
+| GHZ, 5 qubits | 5 × 6 | 0.080 | 0.067 | 0.153 | pass |
+| Rotations and entangling gates (RX, RY, RZ, H, CX, CZ), 3 qubits | 3 × 6 | 0.015 | 0.012 | 0.045 | pass |
+| Inverse QFT, 3 qubits | 3 × 6 | 0.046 | 0.035 | 0.090 | pass |
+
+For the Bell and GHZ states the ideal distribution is symmetric under bit reversal, so only the rotation and inverse-QFT circuits test bit order; both were far closer to the ideal (TVD 0.015 and 0.046) than to its reversed form (0.203 and 0.267). The same job also ran a CHSH test on 32 Bell pairs, 2000 shots for each of the four setting pairs: S = 2.682 ± 0.006, above the classical bound of 2 by 116 standard deviations, and above 2 for all 32 pairs.
+
+One run on one device on one day; hardware noise changes with every calibration.
+
 ## Trademarks
 
 IBM Quantum and Qiskit are trademarks of International Business Machines Corporation. HILBERT ROOM is an independent project; it is not affiliated with, endorsed by or sponsored by IBM. Qiskit is mentioned only to describe conventions this library follows.
